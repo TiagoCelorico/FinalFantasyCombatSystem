@@ -1,0 +1,6 @@
+bucket.png
+catito.png
+drop.mp3
+drop.png
+libgdx.png
+music.mp3
