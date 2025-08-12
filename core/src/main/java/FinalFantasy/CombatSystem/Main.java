@@ -24,11 +24,10 @@ import java.util.Vector;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main implements ApplicationListener
 {
+    Bucket bucket;
 
     Texture backgroundTexture;
     Texture dropTexture;
-    Texture bucketTexture;
-    Sprite bucketSprite;
 
     Sound dropSound;
     Music music;
@@ -36,29 +35,22 @@ public class Main implements ApplicationListener
     SpriteBatch spriteBatch;
     FitViewport viewport;
 
-    Vector2 touchPos;
-
     Array<Sprite> dropSprites;
     float dropTimer;
 
-    Rectangle bucketRectangle;
-    Rectangle dropRectangle;
 
-    float speed = 4f;
-    float delta = Gdx.graphics.getDeltaTime();
 
-    float worldWidth = viewport.getWorldWidth();
-    float worldHeight = viewport.getWorldHeight();
+
+    float delta = 0;
+
+    float worldWidth;
+    float worldHeight;
 
 
     @Override
     public void create()
     {
         backgroundTexture = new Texture("catito.png");
-
-        bucketTexture = new Texture("bucket.png");
-        bucketSprite = new Sprite(bucketTexture);
-        bucketSprite.setSize(1,1);
 
         dropTexture = new Texture("drop.png");
 
@@ -71,9 +63,14 @@ public class Main implements ApplicationListener
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(8, 5);
 
-        touchPos = new Vector2();
+        worldWidth = viewport.getWorldWidth();
+        worldHeight = viewport.getWorldHeight();
+
+
 
         dropSprites = new Array<>();
+
+
 
     }
 
@@ -86,57 +83,38 @@ public class Main implements ApplicationListener
     @Override
     public void render()
     {
-        input();
+        delta = Gdx.graphics.getDeltaTime();
+        bucket.input(delta);
         logic();
         draw();
     }
 
-    private void input()
-    {
-
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-        {
-            bucketSprite.translateX(speed * delta);
-        }
-        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-        {
-            bucketSprite.translateX(-speed * delta);
-        }
-
-        if(Gdx.input.isTouched())
-        {
-            touchPos.set(Gdx.input.getX(),Gdx.input.getY());//get where the touch happened on screen
-            viewport.unproject(touchPos);//convert units to world units of viewport
-            bucketSprite.setCenterX(touchPos.x);//change the horizontal position of the bucket
-        }
-
-    }
 
     private void logic()
     {
-        float bucketWidth = bucketSprite.getWidth();
-        float bucketHeight = bucketSprite.getHeight();
 
-        bucketSprite.setX(MathUtils.clamp(bucketSprite.getX(), 0, worldWidth - bucketWidth));
+        bucket.bucketLogic();
 
         float delta = Gdx.graphics.getDeltaTime();
 
         for(int i = dropSprites.size-1; i >=0; i--)
         {
             Sprite dropSprite = dropSprites.get(i);//get the sprites from the list
+            Rectangle dropRectangle = dropSprite.getBoundingRectangle();
+
 
             float dropWidth = dropSprite.getWidth();
             float dropHeight = dropSprite.getHeight();
 
             dropSprite.translateY(-2f * delta);
 
-            dropRectangle.set(dropSprite.getX(), dropSprite.getY(), dropWidth, dropHeight);
+            //dropRectangle.set(dropSprite.getX(), dropSprite.getY(), dropWidth, dropHeight);
 
             if(dropSprite.getY() < -dropWidth)
             {
                 dropSprites.removeIndex(i);
             }
-            else if (bucketRectangle.overlaps(dropRectangle)) //check if bucket overlaps drop
+            else if (bucket.getPhysicalObject().overlaps(dropRectangle)) //check if bucket overlaps drop
             {
                 dropSprites.removeIndex(i); //remove drop
                 dropSound.play(); //play sound
@@ -172,7 +150,7 @@ public class Main implements ApplicationListener
     private void middleDraw()
     {
         spriteBatch.draw(backgroundTexture,0,0, worldWidth, worldHeight);
-        bucketSprite.draw(spriteBatch);
+        bucket.render(spriteBatch);
 
         for(Sprite dropSprite : dropSprites)
         {
@@ -195,12 +173,14 @@ public class Main implements ApplicationListener
 
 
     @Override
-    public void pause() {
+    public void pause()
+    {
 
     }
 
     @Override
-    public void resume() {
+    public void resume()
+    {
 
     }
 
