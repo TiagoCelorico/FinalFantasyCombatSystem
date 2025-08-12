@@ -44,6 +44,12 @@ public class Main implements ApplicationListener
     Rectangle bucketRectangle;
     Rectangle dropRectangle;
 
+    float speed = 4f;
+    float delta = Gdx.graphics.getDeltaTime();
+
+    float worldWidth = viewport.getWorldWidth();
+    float worldHeight = viewport.getWorldHeight();
+
 
     @Override
     public void create()
@@ -87,8 +93,6 @@ public class Main implements ApplicationListener
 
     private void input()
     {
-        float speed = 4f;
-        float delta = Gdx.graphics.getDeltaTime();
 
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
         {
@@ -110,9 +114,6 @@ public class Main implements ApplicationListener
 
     private void logic()
     {
-        float worldWidth = viewport.getWorldWidth();
-        float worldHeight = viewport.getWorldHeight();
-
         float bucketWidth = bucketSprite.getWidth();
         float bucketHeight = bucketSprite.getHeight();
 
@@ -161,9 +162,15 @@ public class Main implements ApplicationListener
 
         spriteBatch.begin();//begin very important
 
-        float worldWidth = viewport.getWorldWidth();
-        float worldHeight = viewport.getWorldHeight();
 
+        middleDraw();
+
+
+        spriteBatch.end();//end very important
+    }
+
+    private void middleDraw()
+    {
         spriteBatch.draw(backgroundTexture,0,0, worldWidth, worldHeight);
         bucketSprite.draw(spriteBatch);
 
@@ -171,18 +178,12 @@ public class Main implements ApplicationListener
         {
             dropSprite.draw(spriteBatch);
         }
-
-
-        spriteBatch.end();//end very important
     }
 
     private void createDroplet()
     {
         float dropWidth = 1;
         float dropHeight = 1;
-
-        float worldWidth = viewport.getWorldWidth();
-        float worldHeight = viewport.getWorldHeight();
 
         Sprite dropSprite = new Sprite(dropTexture);
 
@@ -191,6 +192,7 @@ public class Main implements ApplicationListener
         dropSprite.setY(worldHeight);
         dropSprites.add(dropSprite);
     }
+
 
     @Override
     public void pause() {
