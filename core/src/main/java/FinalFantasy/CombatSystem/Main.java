@@ -1,45 +1,26 @@
 package FinalFantasy.CombatSystem;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-
-import java.util.Vector;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main implements ApplicationListener
 {
-    Bucket bucket;
+    Bucket bucket = null;
+    Drops drops;
 
     Texture backgroundTexture;
-    Texture dropTexture;
 
-    Sound dropSound;
     Music music;
 
     SpriteBatch spriteBatch;
     FitViewport viewport;
-
-    Array<Sprite> dropSprites;
-    float dropTimer;
-
-
-
 
     float delta = 0;
 
@@ -52,9 +33,6 @@ public class Main implements ApplicationListener
     {
         backgroundTexture = new Texture("catito.png");
 
-        dropTexture = new Texture("drop.png");
-
-        dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
         music.setLooping(true);
         music.setVolume(.5f);
@@ -65,13 +43,6 @@ public class Main implements ApplicationListener
 
         worldWidth = viewport.getWorldWidth();
         worldHeight = viewport.getWorldHeight();
-
-
-
-        dropSprites = new Array<>();
-
-
-
     }
 
     @Override
@@ -84,7 +55,7 @@ public class Main implements ApplicationListener
     public void render()
     {
         delta = Gdx.graphics.getDeltaTime();
-        bucket.input(delta);
+        bucket.tick(delta);
         logic();
         draw();
     }
@@ -95,38 +66,7 @@ public class Main implements ApplicationListener
 
         bucket.bucketLogic();
 
-        float delta = Gdx.graphics.getDeltaTime();
-
-        for(int i = dropSprites.size-1; i >=0; i--)
-        {
-            Sprite dropSprite = dropSprites.get(i);//get the sprites from the list
-            Rectangle dropRectangle = dropSprite.getBoundingRectangle();
-
-
-            float dropWidth = dropSprite.getWidth();
-            float dropHeight = dropSprite.getHeight();
-
-            dropSprite.translateY(-2f * delta);
-
-            //dropRectangle.set(dropSprite.getX(), dropSprite.getY(), dropWidth, dropHeight);
-
-            if(dropSprite.getY() < -dropWidth)
-            {
-                dropSprites.removeIndex(i);
-            }
-            else if (bucket.getPhysicalObject().overlaps(dropRectangle)) //check if bucket overlaps drop
-            {
-                dropSprites.removeIndex(i); //remove drop
-                dropSound.play(); //play sound
-            }
-        }
-
-        dropTimer += delta;
-        if(dropTimer > 1f)
-        {
-            dropTimer = 0;
-            createDroplet();
-        }
+        drops.dropLogic(delta);
 
     }
 
@@ -152,24 +92,9 @@ public class Main implements ApplicationListener
         spriteBatch.draw(backgroundTexture,0,0, worldWidth, worldHeight);
         bucket.render(spriteBatch);
 
-        for(Sprite dropSprite : dropSprites)
-        {
-            dropSprite.draw(spriteBatch);
-        }
     }
 
-    private void createDroplet()
-    {
-        float dropWidth = 1;
-        float dropHeight = 1;
 
-        Sprite dropSprite = new Sprite(dropTexture);
-
-        dropSprite.setSize(dropWidth,dropHeight);
-        dropSprite.setX(MathUtils.random(0f,worldWidth - dropWidth)); //random drop position
-        dropSprite.setY(worldHeight);
-        dropSprites.add(dropSprite);
-    }
 
 
     @Override

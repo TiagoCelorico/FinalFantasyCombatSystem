@@ -24,6 +24,7 @@ public class Bucket
     float speed = 4f;
 
     Vector2 touchPos = new Vector2();
+    Vector2 MovementVector = new Vector2();
 
     FitViewport viewport;
 
@@ -43,16 +44,19 @@ public class Bucket
     }
 
 
-    public void input(float delta)
+    public void ProcessInput()
     {
+        MovementVector.x = 0;
+        MovementVector.y = 0;
 
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
         {
-            bucketSprite.translateX(speed * delta);
+            MovementVector.x +=1;
         }
-        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
         {
-            bucketSprite.translateX(-speed * delta);
+            MovementVector.x -=1;
         }
 
         if(Gdx.input.isTouched())
@@ -62,6 +66,12 @@ public class Bucket
             bucketSprite.setCenterX(touchPos.x);//change the horizontal position of the bucket
         }
 
+    }
+
+    public void tick(float delta)
+    {
+        bucketSprite.translateX(MovementVector.x * speed * delta);
+        bucketSprite.setX(MathUtils.clamp(bucketSprite.getX(), minPos,maxPos));
     }
 
     public void bucketLogic()
