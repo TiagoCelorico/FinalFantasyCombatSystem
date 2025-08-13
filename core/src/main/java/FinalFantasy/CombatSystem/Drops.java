@@ -30,7 +30,7 @@ public class Drops
 
     FitViewport viewport;
 
-    public void create(float worldWidth, FitViewport viewportProjection)
+    public void create(float worldWidth, FitViewport viewportProjection, Bucket bucketReference)
     {
         viewport = viewportProjection;
 
@@ -40,8 +40,10 @@ public class Drops
 
         dropSprites = new Array<>();
 
-        worldWidth = viewport.getWorldWidth();
+        this.worldWidth = viewport.getWorldWidth();
         worldHeight = viewport.getWorldHeight();
+
+        bucket = bucketReference;
     }
 
 
@@ -53,14 +55,14 @@ public class Drops
             Rectangle dropRectangle = dropSprite.getBoundingRectangle();
 
 
-            float dropWidth = dropSprite.getWidth();
+            float dropHeight = dropSprite.getHeight();
 
 
             dropSprite.translateY(-2f * delta);
 
 
 
-            if(dropSprite.getY() < -dropWidth)
+            if(dropSprite.getY() < -dropHeight)
             {
                 dropSprites.removeIndex(i);
             }
@@ -79,16 +81,6 @@ public class Drops
         }
     }
 
-
-    public void dropMiddleDraw(SpriteBatch spriteBatch)
-    {
-        for(Sprite dropSprite : dropSprites)
-        {
-            dropSprite.draw(spriteBatch);
-        }
-    }
-
-
     private void createDroplet()
     {
 
@@ -100,7 +92,13 @@ public class Drops
         dropSprites.add(dropSprite);
     }
 
-
+    public void dropMiddleDraw(SpriteBatch spriteBatch)
+    {
+        for(Sprite dropSprite : dropSprites)
+        {
+            dropSprite.draw(spriteBatch);
+        }
+    }
 
 
 

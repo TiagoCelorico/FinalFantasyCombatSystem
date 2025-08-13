@@ -43,6 +43,13 @@ public class Main implements ApplicationListener
 
         worldWidth = viewport.getWorldWidth();
         worldHeight = viewport.getWorldHeight();
+
+        bucket = new Bucket();
+        bucket.create(worldWidth, viewport);
+
+        drops = new Drops();
+        drops.create(worldWidth,viewport, bucket);
+
     }
 
     @Override
@@ -55,6 +62,7 @@ public class Main implements ApplicationListener
     public void render()
     {
         delta = Gdx.graphics.getDeltaTime();
+        bucket.ProcessInput();
         bucket.tick(delta);
         logic();
         draw();
@@ -63,8 +71,6 @@ public class Main implements ApplicationListener
 
     private void logic()
     {
-
-        bucket.bucketLogic();
 
         drops.dropLogic(delta);
 
@@ -91,7 +97,7 @@ public class Main implements ApplicationListener
     {
         spriteBatch.draw(backgroundTexture,0,0, worldWidth, worldHeight);
         bucket.render(spriteBatch);
-
+        drops.dropMiddleDraw(spriteBatch);
     }
 
 

@@ -74,11 +74,6 @@ public class Bucket
         bucketSprite.setX(MathUtils.clamp(bucketSprite.getX(), minPos,maxPos));
     }
 
-    public void bucketLogic()
-    {
-        bucketSprite.setX(MathUtils.clamp(bucketSprite.getX(), minPos, maxPos));
-    }
-
     public void render(SpriteBatch spriteBatch)
     {
         bucketSprite.draw(spriteBatch);
