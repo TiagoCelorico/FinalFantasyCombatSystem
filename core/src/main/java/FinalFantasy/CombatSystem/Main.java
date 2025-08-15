@@ -14,6 +14,7 @@ public class Main implements ApplicationListener
 {
     Bucket bucket = null;
     Drops drops;
+    Lava lava;
 
     Texture backgroundTexture;
 
@@ -44,11 +45,9 @@ public class Main implements ApplicationListener
         worldWidth = viewport.getWorldWidth();
         worldHeight = viewport.getWorldHeight();
 
-        bucket = new Bucket();
-        bucket.create(worldWidth, viewport);
-
-        drops = new Drops();
-        drops.create(worldWidth,viewport, bucket);
+        bucket = Bucket.create(viewport);
+        drops =  Drops.create(viewport, bucket);
+        lava =  Lava.create(viewport, bucket);
 
     }
 
@@ -71,9 +70,9 @@ public class Main implements ApplicationListener
 
     private void logic()
     {
-
         drops.dropLogic(delta);
 
+        lava.lavaLogic(delta);
     }
 
     private void draw()
@@ -98,8 +97,8 @@ public class Main implements ApplicationListener
         spriteBatch.draw(backgroundTexture,0,0, worldWidth, worldHeight);
         bucket.render(spriteBatch);
         drops.dropMiddleDraw(spriteBatch);
+        lava.lavaMiddleDraw(spriteBatch);
     }
-
 
 
 

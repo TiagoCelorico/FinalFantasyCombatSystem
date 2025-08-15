@@ -29,7 +29,7 @@ public class Bucket
     FitViewport viewport;
 
 
-    public void create(float worldWidth, FitViewport viewportProjection)
+    private Bucket(FitViewport viewportProjection)
     {
         viewport = viewportProjection;
 
@@ -40,9 +40,13 @@ public class Bucket
         bucketWidth = bucketSprite.getWidth();
         bucketHeight = bucketSprite.getHeight();
 
-        maxPos = worldWidth - bucketWidth;
+        maxPos = viewportProjection.getWorldWidth() - bucketWidth;
     }
 
+    public static Bucket create(FitViewport viewportProjection)
+    {
+        return new Bucket(viewportProjection);
+    }
 
     public void ProcessInput()
     {

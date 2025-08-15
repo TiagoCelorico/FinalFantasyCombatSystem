@@ -30,7 +30,7 @@ public class Drops
 
     FitViewport viewport;
 
-    public void create(float worldWidth, FitViewport viewportProjection, Bucket bucketReference)
+    private Drops (FitViewport viewportProjection, Bucket bucketReference)
     {
         viewport = viewportProjection;
 
@@ -46,6 +46,10 @@ public class Drops
         bucket = bucketReference;
     }
 
+    public static Drops create(FitViewport viewportProjection, Bucket bucketReference)
+    {
+        return new Drops(viewportProjection, bucketReference);
+    }
 
     public void dropLogic(float delta)
     {
